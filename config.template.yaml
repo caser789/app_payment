@@ -1,0 +1,155 @@
+main:
+    appname: template
+    app: #app支持那些app_id,这些app_id在不同的platform上的bundleId
+        999999:
+            ios: com.ihandysoft.apptemplate
+            android: com.ihs.app.template
+            sig_keys:
+                '1': "1234567890abcdefghigklmnopqrstuv"
+            cten_keys:
+                '1': "99999999999999999999999999999999"
+        111111:
+            ios: com.ihandysoft.apptemplate
+            android: com.ihs.app.template
+            sig_keys:
+                '1': "vutsrqponmlkgihgfedcba0987654321"
+            cten_keys:
+                '1': "11111111111111111111111111111111"
+    request:
+        slow_timeout: 1000 # ms, default 1000
+        sig_keys:
+            '1': "1234567890abcdefghigklmnopqrstuv"
+            'root_1': "1234567890abcdefghigklmnopqrstuv"
+        cten_keys:
+            '1': "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            'root_1': "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    num_proxies: 2 #proxies number server behind
+    log:
+        #optional default false, should be false for online service
+        stdout: true
+        #default info, should be [debug, info, warning, error, critical]
+        level: debug
+        #optional default 1, must be >= 1 and <= 7
+        facility: 1
+        #optional default ["127.0.0.1", 514]
+        server: ["127.0.0.1", 1514]
+        #optional
+        filters:
+            api: DEBUG
+            redynadb: DEBUG
+        sentry_dsn: "http://5a326a22885646f699f448a24593e5bd:43d8ec7414364184b8f3cd8e0c8d2400@192.168.1.107:9000/2"
+
+    # optional,  server, default ["127.0.0.1", 8125]
+    statsd:
+        server: ["127.0.0.1", 8125]
+
+    session_store:
+        url: "redis://127.0.0.1/0"
+
+    firehose:
+        region: us-east-1
+        aws_access_key_id: aaa
+        aws_secret_access_key: bbb
+
+    sqldb:
+        default:
+            url: "mysql+pymysql://name:password@host:3306/db?charset=utf8mb4"
+            options:
+                pool_size: 20
+        db2:
+            url: "mysql+pymysql://name:password@host2:3306/db?pool_size=20"
+
+    # icm push related config
+    push:
+        url: http://54.243.29.45:8080
+        # optional, whether support keepserver
+        keepserver: keepserver://54.223.147.232:6000
+        # optional, the badge types used to calculate the push badge
+        # default, all the sub_class of dock.notify.PushBadge
+        badge_types: []
+        # optional, the expire time of the badge
+        badge_expire_days: 1
+        push_contents:
+          999999: !import local://999999_push_contents.yaml
+        payloads:
+            # 999999: !import s3://push_payloads/999999.yaml
+            999999: !import local://999999.yaml
+
+
+    redynadb:
+        cache_enabled: True
+        use_cluster_cache: false
+        max_connections: 100
+        dblog: false
+        table_prefix : 'template'
+        redis_instances:
+            - redis://127.0.0.1:6379/0
+            - redis://127.0.0.1:6378/0
+        dynamodb:
+            region: us-east-1
+            aws_access_key_id: AKIAIBZLJMBJNAY3GV7Q
+            aws_secret_access_key: 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
+    redis:
+        key_prefix: template
+        sharding_threshold: 10000000
+        instances:
+            - redis://127.0.0.1:6379/0
+            - redis://127.0.0.1:6379/0
+
+    data_store:
+        #engine: 'mongodb://localhost:27017/datastore'
+        #engine: 'redis://127.0.0.1:6379/0'
+        #engine: 'dynamodb://'
+        engine: 'file:///Users/liyongbo/virtue/test/datastore.json'
+
+    pubsub:
+        aws_access_key_id: ''
+        aws_secret_access_key: ''
+        region_name: 'us-east-1'
+
+    reds3:
+        redis_instances:
+        -
+            host: 127.0.0.1
+            port: 6379
+            db: 0
+            prefix: ''
+        s3:
+            aws_access_key_id: 12345
+            aws_secret_access_key: abcdef
+            host: 127.0.0.1
+            port: 10001
+            bucket: 'default'
+            archive_step: 200
+
+    remote_resource:
+        region: us-east-1
+        aws_access_key_id: ''
+        aws_secret_access_key: ''
+        bucket: dock-remote-resource
+        folder: dock-template
+
+    ssm:
+        region: us-east-1
+        # aws_access_key_id: AKIAJPK6VV3A4BB6IJTQ
+        # aws_secret_access_key: 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
+        aws_access_key_id: !import vault://gAAAAABaqjdpuE7Rb3j2b02c1Mi8ysbTKh5TNMaS5wMhkvuQJSkHi0lPWsZSa8Ns0WqwSvzMJADGFozKtcQUrLqD4NPPPKz3neXZliNQMUJjpOqQDQ_UT0g=
+        aws_secret_access_key: !import vault://gAAAAABaqjepxzHzQtQZL7HgistbdTA9-wk4N0280drtNicMuMkPokEyeGPkBShBygyFyLgVJQN6jOouo1F2-6qGPKYEo4bN4Y4LDnXG9irEu4jaUD6jgWxKH0wJIIAl-MM93BNKVWV1
+
+    account:
+        Amazon: !import ssm:///appcloudbox/datahome/account/Amazon interval=60
+
+    remote_sig_factors: !import remote_sig_factors from local://autoload.yaml interval=10
+
+    tasklet:
+        dock.tasklet.loadresource:
+            doc: "help doc"
+            number: 1
+            args:
+                converters: []
+                resources:
+                    - "s3://dock-remote-resource/dock-template/res*.yaml interval=5m pre=1m converter=yrestruct"
+                    - "local://s3/res2.yaml interval=5m pre=1m"
+                remote_keys:
+                    default: "us-east-1:AKIAJH4OM4NJFA37TR2Q:VS26ZwPKtotoqMoN5VY+gL1pnyCgcGAjwd4jx63l"
+                    dock-remote-common:  "us-east-1:AKIAJH4OM4NJFA37TR2Q:VS26ZwPKtotoqMoN5VY+gL1pnyCgcGAjwd4jx63l"
