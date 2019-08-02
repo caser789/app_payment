@@ -1,8 +1,10 @@
-from dock.web import DockApp
+from dock.web import DockApp; 
+from dock.common import config
 
 app = DockApp("")
 
-from dock.common import config
+import app_payment
+app.mount(app_payment)
 
 @app.flaskapp.route('/')
 def health():
