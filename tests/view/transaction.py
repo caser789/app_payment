@@ -37,7 +37,7 @@ class CreateTransactionTestCase(unittest.TestCase):
             'memo': 'memo',
             'extra_data': {},
         }
-        response = self.app.post(
+        self.app.post(
             self.url,
             data=json.dumps(data),
             content_type='application/json'
@@ -66,7 +66,7 @@ class CreateTransactionTestCase(unittest.TestCase):
             'memo': 'memo',
             'extra_data': {},
         }
-        response = self.app.post(
+        self.app.post(
             self.url,
             data=json.dumps(data),
             content_type='application/json'
