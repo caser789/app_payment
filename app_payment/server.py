@@ -1,4 +1,4 @@
-from dock.web import DockApp; 
+from dock.web import DockApp
 from dock.common import config
 
 app = DockApp("")
